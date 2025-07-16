@@ -1,0 +1,22 @@
+{
+  "name": "mightycodingtest",
+  "version": "1.0.0",
+  "description": "a poll site",
+  "main": "back-end/index.js",
+  "scripts": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZacharyMohler/MightyCodingTest.git"
+  },
+  "author": "Zachary Mohler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZacharyMohler/MightyCodingTest/issues"
+  },
+  "homepage": "https://github.com/ZacharyMohler/MightyCodingTest#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
