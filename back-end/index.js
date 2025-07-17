@@ -1,13 +1,39 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
 const port = 3000;
 
+app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// File path for persistence
+const DATA_FILE = path.join(__dirname, 'polls.json'); // ADDED
 
 //local memory (vs db)
 let polls = [];
 let nextId = 1;
+
+try {
+  if (fs.existsSync(DATA_FILE)) {
+    const fileData = fs.readFileSync(DATA_FILE, 'utf-8');
+    polls = JSON.parse(fileData);
+    // set nextId based on max poll id found
+    nextId = polls.reduce((maxId, poll) => Math.max(maxId, poll.id), 0) + 1;
+  }
+} catch (err) {
+  console.error('Failed to load polls from file:', err);
+}
+
+// Utility function to save polls to file
+function savePollsToFile() {
+  fs.writeFile(DATA_FILE, JSON.stringify(polls, null, 2), err => {
+    if (err) console.error('Failed to save polls:', err);
+  });
+}
 
 //GET list - returns all polls
 app.get('/polls', (req, res) => {
@@ -70,6 +96,8 @@ app.post('/polls', (req, res) => {
 
   polls.push(newPoll);
 
+  savePollsToFile();
+
   res.status(201).json({
     success: true,
     data: newPoll,
@@ -101,6 +129,8 @@ app.post('/polls/:id/vote', (req, res) => {
   // Add vote
   poll.options[optionIndex].votes++;
   poll.totalVotes++;
+
+  savePollsToFile();
 
   res.json({
     success: true,
